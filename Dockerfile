@@ -12,7 +12,7 @@ RUN chmod +x mvnw
 COPY src ./src
 
 # Package the application (this will also download the dependencies)
-RUN ./mvnw package -DskipTests
+RUN ./mvnw package -DskipTests && ls target/*.jar
 
 # Copy the packaged JAR file to the container
 COPY target/*.jar app.jar
