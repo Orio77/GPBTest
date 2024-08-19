@@ -8,6 +8,7 @@ WORKDIR /app
 COPY pom.xml .
 COPY .mvn .mvn
 COPY mvnw .
+RUN chmod +x mvnw
 COPY src ./src
 
 # Package the application (this will also download the dependencies)
