@@ -8,6 +8,10 @@ COPY .mvn/ .mvn/
 COPY mvnw ./
 COPY src/ ./src/
 
+# Ensure the mvnw script is executable
+RUN chmod +x mvnw
+
+# Package the application
 RUN ./mvnw package -DskipTests
 
 # Stage 2: Copy the jar file from the builder stage to the final stage
