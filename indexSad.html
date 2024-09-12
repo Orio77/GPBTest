@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pl">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Automatyczne zamknięcie strony</title>
+		<style>
+			/* Stylizacja tła wideo */
+			.background-video {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100vw;
+				height: 100vh;
+				z-index: -1;
+				object-fit: cover;
+				filter: brightness(50%);
+				display: none; /* Hide video until fully loaded */
+			}
+
+			/* Stylizacja dla treści na stronie */
+			.content {
+				position: relative;
+				text-align: center;
+				color: white;
+				margin-top: 10vh;
+				display: none; /* Hide content until fully loaded */
+			}
+
+			.promo-text {
+				font-size: 6vw;
+				font-weight: bold;
+				color: #ffd700;
+				margin-top: 2vh;
+				text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+			}
+
+			/* Stylizacja licznika czasu */
+			#demo {
+				font-size: 4vw;
+				margin-top: 2vh;
+			}
+
+			/* Stylizacja dla loading overlay */
+			.loading-overlay {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100vw;
+				height: 100vh;
+				background-color: black;
+				z-index: 100;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+
+			.spinner {
+				border: 1.6vw solid #f3f3f3;
+				border-top: 1.6vw solid #3498db;
+				border-radius: 50%;
+				width: 12vw;
+				height: 12vw;
+				animation: spin 2s linear infinite;
+			}
+
+			@keyframes spin {
+				0% {
+					transform: rotate(0deg);
+				}
+				100% {
+					transform: rotate(360deg);
+				}
+			}
+
+			/* Responsive image styling */
+			.content img {
+				width: 80vw;
+				height: auto;
+				max-width: 60%;
+			}
+		</style>
+		<script type="text/javascript">
+			// Function to hide the loading overlay
+			function hideLoadingOverlay() {
+				console.log("Hiding loading overlay");
+				document.querySelector(".loading-overlay").style.display = "none";
+				document.querySelector(".background-video").style.display = "block";
+				document.querySelector(".content").style.display = "block";
+			}
+
+			// Wait for the full load of the image and video
+			window.onload = function () {
+				const video = document.querySelector(".background-video");
+				const image = document.querySelector(".content img");
+
+				video.onloadeddata = () => {
+					console.log("Video loaded");
+					if (image.complete) {
+						console.log("Image already loaded");
+						hideLoadingOverlay();
+					}
+				};
+
+				image.onload = () => {
+					console.log("Image loaded");
+					if (video.readyState >= 3) {
+						console.log("Video ready state is sufficient");
+						hideLoadingOverlay();
+					}
+				};
+
+				// Additional check in case both are already loaded
+				if (video.readyState >= 3 && image.complete) {
+					console.log("Both video and image are already loaded");
+					hideLoadingOverlay();
+				}
+			};
+		</script>
+	</head>
+	<body>
+		<!-- Loading overlay -->
+		<div class="loading-overlay">
+			<div class="spinner"></div>
+		</div>
+
+		<!-- Wideo w tle -->
+		<video class="background-video" autoplay loop muted>
+			<source
+				src="https://drive.google.com/uc?export=view&id=1gC2Y-7o7IfkjvdyTpL3T-6pU8h2TliDh"
+				type="video/mp4"
+			/>
+			Twoja przeglądarka nie obsługuje tagu wideo.
+		</video>
+
+		<!-- Główna zawartość strony -->
+		<div class="content">
+			<img
+				src="https://drive.google.com/uc?export=view&id=1est78QTfnnPVTNL5xeFZkGdTBzpwyyP9"
+				alt="Promotional Image"
+			/>
+
+			<p class="promo-text">Oferta Wykorzystana...</p>
+		</div>
+	</body>
+</html>

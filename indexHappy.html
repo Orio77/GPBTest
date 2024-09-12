@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="pl">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Automatyczne zamknięcie strony</title>
+		<style>
+			/* Stylizacja tła wideo */
+			.background-video {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100vw;
+				height: 100vh;
+				z-index: -1;
+				object-fit: cover;
+				filter: brightness(50%); /* Opcjonalnie: przyciemnienie tła */
+				display: none; /* Hide video until fully loaded */
+			}
+
+			/* Stylizacja dla treści na stronie */
+			.content {
+				position: relative;
+				text-align: center;
+				color: white;
+				margin-top: 10vh;
+				display: none; /* Hide content until fully loaded */
+			}
+
+			.promo-text {
+				font-size: 6vw;
+				font-weight: bold;
+				color: #ffd700; /* Złoty kolor */
+				margin-top: 2vh;
+				text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Lekki cień dla efektu */
+			}
+
+			/* Stylizacja licznika czasu */
+			#demo {
+				font-size: 4vw;
+				margin-top: 2vh;
+			}
+
+			/* Stylizacja dla loading overlay */
+			.loading-overlay {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100vw;
+				height: 100vh;
+				background-color: black;
+				z-index: 100;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+
+			.spinner {
+				border: 1.6vw solid #f3f3f3;
+				border-top: 1.6vw solid #3498db;
+				border-radius: 50%;
+				width: 12vw;
+				height: 12vw;
+				animation: spin 2s linear infinite;
+			}
+
+			@keyframes spin {
+				0% {
+					transform: rotate(0deg);
+				}
+				100% {
+					transform: rotate(360deg);
+				}
+			}
+
+			/* Responsive image styling */
+			.content img {
+				width: 80vw;
+				height: auto;
+				max-width: 60%;
+			}
+		</style>
+		<script type="text/javascript">
+			// Function to hide the loading overlay
+			function hideLoadingOverlay() {
+				console.log("Hiding loading overlay");
+				document.querySelector(".loading-overlay").style.display = "none";
+				document.querySelector(".background-video").style.display = "block";
+				document.querySelector(".content").style.display = "block";
+			}
+
+			// Wait for the full load of the image and video
+			window.onload = function () {
+				const video = document.querySelector(".background-video");
+				const image = document.querySelector(".content img");
+
+				video.onloadeddata = () => {
+					console.log("Video loaded");
+					if (image.complete) {
+						console.log("Image already loaded");
+						hideLoadingOverlay();
+					}
+				};
+
+				image.onload = () => {
+					console.log("Image loaded");
+					if (video.readyState >= 3) {
+						console.log("Video ready state is sufficient");
+						hideLoadingOverlay();
+					}
+				};
+
+				// Additional check in case both are already loaded
+				if (video.readyState >= 3 && image.complete) {
+					console.log("Both video and image are already loaded");
+					hideLoadingOverlay();
+				}
+			};
+
+			// Funkcja zamykająca stronę
+			function zamknijStrone() {
+				window.close(); // Próbuje zamknąć stronę
+			}
+
+			// Ustawienie daty zakończenia na 15 minut od teraz
+			var countDownDate = new Date(
+				new Date().getTime() + 15 * 60 * 1000
+				// new Date().getTime() + 5 * 1000
+			).getTime();
+
+			// Aktualizacja odliczania co 1 sekundę
+			var x = setInterval(function () {
+				// Pobranie aktualnego czasu
+				var now = new Date().getTime();
+
+				// Obliczenie odległości między teraz a datą docelową
+				var distance = countDownDate - now;
+
+				// Obliczenia czasu na minuty i sekundy
+				var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+				var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+				// Wyświetlenie wyniku w elemencie o id="demo"
+				document.getElementById("demo").innerHTML =
+					minutes + "m " + seconds + "s ";
+
+				// Jeśli odliczanie się zakończy, wyświetl tekst i zamknij stronę
+				if (distance < 0) {
+					clearInterval(x);
+					document.getElementById("demo").innerHTML = "EXPIRED";
+					zamknijStrone();
+				}
+			}, 1000);
+		</script>
+	</head>
+	<body>
+		<!-- Loading overlay -->
+		<div class="loading-overlay">
+			<div class="spinner"></div>
+		</div>
+
+		<!-- Wideo w tle -->
+		<video class="background-video" autoplay loop muted>
+			<source
+				src="https://my.microsoftpersonalcontent.com/personal/300cf746b73e2293/_layouts/15/download.aspx?UniqueId=3c8e4962-d1e7-4dd6-b883-be29d1410ee8&Translate=false&tempauth=v1e.eyJzaXRlaWQiOiJmNWY1NGY5ZS0wYmNlLTRkMmEtOWQxMC02Njg2YzYxZDgxNzkiLCJhcHBpZCI6IjAwMDAwMDAwLTAwMDAtMDAwMC0wMDAwLTAwMDA0ODE3MTBhNCIsImF1ZCI6IjAwMDAwMDAzLTAwMDAtMGZmMS1jZTAwLTAwMDAwMDAwMDAwMC9teS5taWNyb3NvZnRwZXJzb25hbGNvbnRlbnQuY29tQDkxODgwNDBkLTZjNjctNGM1Yi1iMTEyLTM2YTMwNGI2NmRhZCIsImV4cCI6IjE3MjU2MjAxNjYifQ.i2rI4snhXn04CBfDw9dE8SmSsMK4lv9ggsFm337J9sYQwSy3mF93WIlymGsqFIkN1mc7zLAHt5w0jJG6GXOQiROM63XnWiT5EpXSsa6xocVm5Qj15uziRZ0uRvkX3j9V4rib86lpvOz3unmaXgkDyUG5sdKiWWA85KcVGbL_S3-BcD6t-XpdCY6nq8X2g1bJyooMVp8C24Q1MKdeLuebM0pfweZFdPy4bMfuhBWxflaT-CIyPuFVbc2RFpTHIhwQlK_j_EaAcDhJ7Z_FiKQ_9vG0JMpD4lEiRESX97mf6YcfS5t2PUkD7RYUmOwLcvmsqUD1XsI91_4rmrl2w18J5REypO9bioepfIP4P_dn_LngIvByCcHUeU0sQk5fMM4BtWqn2Ef973PLrEueGr-uAA.4GjizDOSc9YVOcsC4JYGs7SNAkhr7ZWMAbTyuuyCKoU&ApiVersion=2.0"
+				type="video/mp4"
+			/>
+			Twoja przeglądarka nie obsługuje tagu wideo.
+		</video>
+
+		<!-- Główna zawartość strony -->
+		<div class="content">
+			<img
+				src="https://southcentralus1-mediap.svc.ms/transform/thumbnail?provider=spo&farmid=191756&inputFormat=png&cs=MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDQ4MTcxMGE0fFNQTw&docid=https%3A%2F%2Fmy.microsoftpersonalcontent.com%2F_api%2Fv2.0%2Fdrives%2Fb!nk_19c4LKk2dEGaGxh2BeVVnKgymdIRFsDOJtPwXqJ4wK_roNJa6SZ3rQAOHSGBI%2Fitems%2F0147BALH6P37WA24V4QZH2FPJ6GMNM2AQZ%3Ftempauth%3Dv1e.eyJzaXRlaWQiOiJmNWY1NGY5ZS0wYmNlLTRkMmEtOWQxMC02Njg2YzYxZDgxNzkiLCJhcHBpZCI6IjAwMDAwMDAwLTAwMDAtMDAwMC0wMDAwLTAwMDA0ODE3MTBhNCIsImF1ZCI6IjAwMDAwMDAzLTAwMDAtMGZmMS1jZTAwLTAwMDAwMDAwMDAwMC9teS5taWNyb3NvZnRwZXJzb25hbGNvbnRlbnQuY29tQDkxODgwNDBkLTZjNjctNGM1Yi1iMTEyLTM2YTMwNGI2NmRhZCIsImV4cCI6IjE3MjU2MzQ4MDAifQ.5fNwqpLXjMzuE8sOJlb6UXv1AnRLtNn2dg2zzj8S1l059VXwSunC0lkF1BN3qDgaZaRK2l-iJN3NisWplgJmsgtg0hil0vxmwV8SJ8ii91VAro5muBqXQ8ESm-gC4gMsI6fhk4oJ79AIajDu4zDrioHHnsiNLZqvp-FZIfc_JzfKeVUdIvNcwRWS3I2sSoRXkXv-uHRSoo-uCiNsWuKf6GR6LKM2xW0vCMu4wUUpOwOgq_Eyahjs1TwQKckhsDy72oERZRf0toXYXnHTuz2Zkry4g-TorNWSLUQIgRiukv006KE5TxKI5sYitkgdbii82WLKdQc01tpehXiqW9wfJn8WzzY9RpCxvBIxNbxGjkMv9z1nrf6hQXnvZlwaadCX.xlgqaLhxtTsgAMy2uNuWNmhxq6kkfgwK6VA5Z5uFhZ4%26version%3DPublished&cb=63861144379&encodeFailures=1&width=943&height=943&action=Access"
+				alt="Promotional Image"
+			/>
+			<p class="promo-text">Odbierz mnie przy kasie!</p>
+			<p>
+				Po 15 minutach od otwarcia tej strony, zostanie ona automatycznie
+				zamknięta.
+			</p>
+			<p id="demo"></p>
+			<!-- Element do wyświetlenia odliczania -->
+		</div>
+	</body>
+</html>
